@@ -52,7 +52,9 @@ NSString * const kTestAPIManagerParamsKeyLongitude = @"kTestAPIManagerParamsKeyL
 {
     NSMutableDictionary *resultParams = [[NSMutableDictionary alloc] init];
     resultParams[@"key"] = [[CTServiceFactory sharedInstance] serviceWithIdentifier:kCTServiceGDMapV3].publicKey;
-    resultParams[@"location"] = [NSString stringWithFormat:@"%@,%@", params[kTestAPIManagerParamsKeyLongitude], params[kTestAPIManagerParamsKeyLatitude]];
+    resultParams[@"location"] = [NSString stringWithFormat:@"%@,%@", 
+                                 params[kTestAPIManagerParamsKeyLongitude],
+                                 params[kTestAPIManagerParamsKeyLatitude]];
     resultParams[@"output"] = @"json";
     return resultParams;
 }
