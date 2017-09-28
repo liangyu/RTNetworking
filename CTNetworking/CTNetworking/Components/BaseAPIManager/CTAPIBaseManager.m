@@ -17,14 +17,17 @@
 #define AXCallAPI(REQUEST_METHOD, REQUEST_ID)                                                   \
 {                                                                                               \
     __weak typeof(self) weakSelf = self;                                                        \
-    REQUEST_ID = [[CTApiProxy sharedInstance] call##REQUEST_METHOD##WithParams:apiParams serviceIdentifier:self.child.serviceType methodName:self.child.methodName success:^(CTURLResponse *response) {                                         \
+    REQUEST_ID = [[CTApiProxy sharedInstance] call##REQUEST_METHOD##WithParams:apiParams        \
+       serviceIdentifier:self.child.serviceType                                                 \
+       methodName:self.child.methodName                                                         \
+       success:^(CTURLResponse *response) {                                                     \
         __strong typeof(weakSelf) strongSelf = weakSelf;                                        \
         [strongSelf successedOnCallingAPI:response];                                            \
     } fail:^(CTURLResponse *response) {                                                         \
         __strong typeof(weakSelf) strongSelf = weakSelf;                                        \
         [strongSelf failedOnCallingAPI:response withErrorType:CTAPIManagerErrorTypeDefault];    \
     }];                                                                                         \
-    [self.requestIdList addObject:@(REQUEST_ID)];                                                   \
+    [self.requestIdList addObject:@(REQUEST_ID)];                                               \
 }
 
 
@@ -62,7 +65,9 @@
             self.child = (id <CTAPIManager>)self;
         } else {
             self.child = (id <CTAPIManager>)self;
-            NSException *exception = [[NSException alloc] initWithName:@"CTAPIBaseManager提示" reason:[NSString stringWithFormat:@"%@没有遵循CTAPIManager协议",self.child] userInfo:nil];
+            NSException *exception = [[NSException alloc] initWithName:@"CTAPIBaseManager提示" 
+                                      reason:[NSString stringWithFormat:@"%@没有遵循CTAPIManager协议",self.child] 
+                                      userInfo:nil];
             @throw exception;
         }
     }
@@ -194,7 +199,10 @@
     if ([self.validator manager:self isCorrectWithCallBackData:response.content]) {
         
         if ([self shouldCache] && !response.isCache) {
-            [self.cache saveCacheWithData:response.responseData serviceIdentifier:self.child.serviceType methodName:self.child.methodName requestParams:response.requestParams];
+            [self.cache saveCacheWithData:response.responseData
+                 serviceIdentifier:self.child.serviceType 
+                 methodName:self.child.methodName 
+                 requestParams:response.requestParams];
         }
         
         if ([self beforePerformSuccessWithResponse:response]) {
@@ -272,7 +280,8 @@
     BOOL result = YES;
     
     self.errorType = CTAPIManagerErrorTypeSuccess;
-    if (self != self.interceptor && [self.interceptor respondsToSelector:@selector(manager: beforePerformSuccessWithResponse:)]) {
+    if (self != self.interceptor && 
+            [self.interceptor respondsToSelector:@selector(manager: beforePerformSuccessWithResponse:)]) {
         result = [self.interceptor manager:self beforePerformSuccessWithResponse:response];
     }
     return result;
@@ -288,7 +297,8 @@
 - (BOOL)beforePerformFailWithResponse:(CTURLResponse *)response
 {
     BOOL result = YES;
-    if (self != self.interceptor && [self.interceptor respondsToSelector:@selector(manager:beforePerformFailWithResponse:)]) {
+    if (self != self.interceptor 
+            && [self.interceptor respondsToSelector:@selector(manager:beforePerformFailWithResponse:)]) {
         result = [self.interceptor manager:self beforePerformFailWithResponse:response];
     }
     return result;
@@ -398,7 +408,10 @@
         __weak typeof(self) weakSelf = self;
         dispatch_async(dispatch_get_main_queue(), ^{
             __strong typeof(weakSelf) strongSelf = weakSelf;
-            CTURLResponse *response = [[CTURLResponse alloc] initWithData:[NSJSONSerialization dataWithJSONObject:result options:0 error:NULL]];
+            CTURLResponse *response = [[CTURLResponse alloc] 
+                                       initWithData:[NSJSONSerialization dataWithJSONObject:result 
+                                                     options:0
+                                                     error:NULL]];
             [strongSelf successedOnCallingAPI:response];
         });
     } else {
